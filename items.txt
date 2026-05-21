@@ -1,0 +1,201 @@
+ItemID,ItemName,Zone,Aisle,Shelf
+1001,Can Opener,1,2,3
+1002,Laptop Stand,1,2,3
+1003,HDMI Cable,1,1,2
+1004,Highlighter Pack,2,3,6
+1005,Sponge Pack,2,4,8
+1006,Drone Mini,1,2,3
+1007,Stapler,2,4,7
+1008,USB-C Hub,1,1,1
+1009,Programming Textbook,2,3,5
+1010,Measuring Cup,1,2,4
+1011,Smart Watch,1,2,3
+1012,Envelope Pack,2,4,7
+1013,Earphone Pouch,1,2,3
+1014,C++ Primer,2,3,6
+1015,Hand Sanitizer,2,3,6
+1016,Phone Case,1,1,1
+1017,Air Freshener,2,4,8
+1018,Whiteboard Marker,2,3,6
+1019,Power Bank,1,1,2
+1020,Tape Dispenser,2,4,8
+1021,Cable Organizer,1,2,4
+1022,Laundry Detergent,2,4,8
+1023,Algorithm Handbook,2,3,5
+1024,Whisk,1,2,4
+1025,Wireless Mouse,1,1,1
+1026,Paper Clips Box,2,4,7
+1027,Mechanical Pencil,2,3,5
+1028,Food Container,1,1,1
+1029,VR Headset,1,2,4
+1030,Trash Bags,2,4,7
+1031,Data Structures Guide,2,3,6
+1032,Toothbrush Pack,2,3,5
+1033,Rubber Bands,2,4,8
+1034,Fitness Tracker,1,2,4
+1035,Cutting Board,1,1,2
+1036,Sticky Notes,2,3,5
+1037,Webcam HD,1,1,1
+1038,Math Workbook,2,3,5
+1039,Screen Protector,1,1,2
+1040,Cleaning Cloth,2,4,7
+1041,Correction Tape,2,3,6
+1042,Bluetooth Speaker,1,1,2
+1043,Binder Clips,2,4,8
+1044,Action Camera,1,2,4
+1045,Spatula,1,2,3
+1046,Python Reference,2,3,6
+1047,Wireless Charger,1,1,1
+1048,LED Monitor,1,2,3
+1049,Dish Soap,2,4,7
+1050,Ballpoint Pen Set,2,3,5
+1051,Mouse Pad,1,1,1
+1052,Notebook A5,2,3,5
+1053,Extension Cord,1,1,2
+1054,Rubber Gloves,2,4,8
+1055,Desk Lamp,1,2,3
+1056,Pencil Sharpener,2,3,6
+1057,Portable SSD,1,1,1
+1058,Dishwashing Sponge,2,4,7
+1059,USB Flash Drive,1,1,2
+1060,Broom,2,4,8
+1061,Graphic Tablet,1,2,4
+1062,Index Cards,2,3,5
+1063,Ethernet Cable,1,1,1
+1064,Mop Refill,2,4,7
+1065,Laptop Sleeve,1,2,3
+1066,Ruler Set,2,3,6
+1067,Keyboard Wireless,1,1,2
+1068,Garbage Bags,2,4,8
+1069,Webcam Tripod,1,2,4
+1070,Glue Stick,2,3,5
+1071,Gaming Mouse,1,1,1
+1072,Tissue Box,2,4,7
+1073,Monitor Arm,1,2,3
+1074,Rubber Stamp,2,3,6
+1075,Power Strip,1,1,2
+1076,Dustpan,2,4,8
+1077,Headphone Stand,1,2,4
+1078,Marker Board,2,3,5
+1079,HDMI Adapter,1,1,1
+1080,Toilet Paper,2,4,7
+1081,Surge Protector,1,2,3
+1082,Binder Set,2,3,6
+1083,Mechanical Keyboard,1,1,2
+1084,Paper Towel,2,4,8
+1085,Laptop Charger,1,2,4
+1086,Colored Pencils,2,3,5
+1087,USB Hub,1,1,1
+1088,Wet Wipes,2,4,7
+1089,Phone Stand,1,2,3
+1090,Memo Pad,2,3,6
+1091,DisplayPort Cable,1,1,2
+1092,Lint Roller,2,4,8
+1093,Wireless Earbuds,1,2,4
+1094,Staple Remover,2,3,5
+1095,SD Card Reader,1,1,1
+1096,Floor Cleaner,2,4,7
+1097,Camera Lens Cap,1,2,3
+1098,Pencil Case,2,3,6
+1099,Audio Splitter,1,1,2
+1100,Scouring Pad,2,4,8
+1101,Desk Organizer,1,2,4
+1102,Folder Set,2,3,5
+1103,Charging Cable,1,1,1
+1104,Hand Soap,2,4,7
+1105,Portable Speaker,1,2,3
+1106,Fountain Pen,2,3,6
+1107,Thunderbolt Cable,1,1,2
+1108,Air Duster,2,4,8
+1109,Ring Light,1,2,4
+1110,Washi Tape,2,3,5
+1111,Laptop RAM,1,1,1
+1112,Glass Cleaner,2,4,7
+1113,USB Microphone,1,2,3
+1114,Eraser Pack,2,3,6
+1115,VGA Cable,1,1,2
+1116,Bucket,2,4,8
+1117,Noise Cancel Earbuds,1,2,4
+1118,Clipboard,2,3,5
+1119,Network Switch,1,1,1
+1120,Fabric Softener,2,4,7
+1121,Drawing Tablet Pen,1,2,3
+1122,Label Maker,2,3,6
+1123,Cat6 Cable,1,1,2
+1124,Spray Bottle,2,4,8
+1125,Docking Station,1,2,4
+1126,Sketch Pad,2,3,5
+1127,Router,1,1,1
+1128,Brush Set,2,4,7
+1129,Portable Monitor,1,2,3
+1130,Envelope Sealer,2,3,6
+1131,USB Ethernet Adapter,1,1,2
+1132,Dryer Sheets,2,4,8
+1133,Webcam Cover,1,2,4
+1134,Graph Paper,2,3,5
+1135,Wireless Adapter,1,1,1
+1136,Stain Remover,2,4,7
+1137,Stream Deck,1,2,3
+1138,Paper Punch,2,3,6
+1139,Fiber Optic Cable,1,1,2
+1140,Shoe Rack,2,4,8
+1141,Laptop Cooler,1,2,4
+1142,Calligraphy Set,2,3,5
+1143,Bluetooth Adapter,1,1,1
+1144,Trash Can Liner,2,4,7
+1145,LED Strip,1,2,3
+1146,Ink Refill,2,3,6
+1147,Coaxial Cable,1,1,2
+1148,Storage Bin,2,4,8
+1149,Mouse Bungee,1,2,4
+1150,Planner Book,2,3,5
+1151,Smart Plug,1,1,1
+1152,Dish Rack,2,4,7
+1153,Cable Sleeve,1,2,3
+1154,Tape Measure,2,3,6
+1155,Audio Cable,1,1,2
+1156,Hangers Pack,2,4,8
+1157,Desk Mat,1,2,4
+1158,Diary 2026,2,3,5
+1159,Power Adapter,1,1,1
+1160,Vacuum Bags,2,4,7
+1161,Monitor Light Bar,1,2,3
+1162,Bookmarks Set,2,3,6
+1163,Patch Cable,1,1,2
+1164,Cleaning Gloves,2,4,8
+1165,Tablet Stand,1,2,4
+1166,Correction Fluid,2,3,5
+1167,Wireless Dongle,1,1,1
+1168,Scrub Brush,2,4,7
+1169,USB Fan,1,2,3
+1170,Watercolor Set,2,3,6
+1171,DVI Cable,1,1,2
+1172,Zipper Bags,2,4,8
+1173,Wrist Rest,1,2,4
+1174,Address Book,2,3,5
+1175,Mini Router,1,1,1
+1176,Mop Bucket,2,4,7
+1177,Laptop Lock,1,2,3
+1178,Letter Opener,2,3,6
+1179,Phone Cable,1,1,2
+1180,Shelf Liner,2,4,8
+1181,Cable Clip Set,1,2,4
+1182,Tracing Paper,2,3,5
+1183,WiFi Extender,1,1,1
+1184,Laundry Basket,2,4,7
+1185,Screen Cleaner,1,2,3
+1186,Gel Pen Set,2,3,6
+1187,Micro USB Cable,1,1,2
+1188,Closet Organizer,2,4,8
+1189,Laptop Backpack,1,2,4
+1190,Whiteboard Eraser,2,3,5
+1191,Travel Adapter,1,1,1
+1192,Feather Duster,2,4,7
+1193,Privacy Screen,1,2,3
+1194,Stamp Pad,2,3,6
+1195,Lightning Cable,1,1,2
+1196,Shoe Box,2,4,8
+1197,Monitor Riser,1,2,4
+1198,Sketch Pencil Set,2,3,5
+1199,Portable Charger,1,1,1
+1200,Drawer Divider,2,4,8
