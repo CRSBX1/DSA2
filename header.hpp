@@ -89,12 +89,25 @@ Item* searchIDNode(Item* node, string id, int &comparisons);
 void loadItemsFromFile(string filename);
 void saveItemsToFile(string filename);
 
-//Section 5: Binary search tree
+//Section 5: Binary tree representing the warehouse hierarchy
+//Tree shape: Warehouse -> 2 Zones -> 4 Aisles -> 8 Shelves (15 nodes total)
+//At every level the left child has a smaller location number than the right child,
+//which lets us treat the tree as a BST for navigation.
 struct Warehouse{
-    string locationName; //Zone, Aisle, Shelf
-    int locationNumber; //1 or 2
-    Warehouse* left;
-    Warehouse* right;
+    string locationName; //"Warehouse", "Zone", "Aisle", or "Shelf"
+    int locationNumber;  //actual number of this section (0 for root, 1-2 for zones, 1-4 for aisles, 1-8 for shelves)
+    Warehouse* left;     //child holding the smaller-numbered sub-location
+    Warehouse* right;    //child holding the larger-numbered sub-location
 };
+
+//Shared globals
+extern Warehouse* warehouseRoot;
+
+//Public functions
+void warehouseMenu();
+void buildWarehouse();
+void cleanupWarehouse();
+string getPathToLocation(int zone, int aisle, int shelf);
+bool isValidWarehouseLocation(int zone, int aisle, int shelf);
 
 #endif

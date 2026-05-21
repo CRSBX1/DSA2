@@ -1,1 +1,15 @@
 *.exe
+
+# Compiled binaries (no extension on macOS/Linux)
+section1
+section2
+section3
+section4
+section5
+Main
+
+# macOS debug symbols
+*.dSYM/
+
+# macOS metadata
+.DS_Store
