@@ -1,3 +1,6 @@
+#ifndef HEADER_HPP
+#define HEADER_HPP
+
 #include <string>
 #include <iostream>
 using namespace std;
@@ -77,6 +80,15 @@ struct Item{
     Item* right;
 };
 
+//Shared globals
+extern Item* itemManagement;
+extern int totalItems;
+//Public functions
+void itemMenu();
+Item* searchIDNode(Item* node, string id, int &comparisons);
+void loadItemsFromFile(string filename);
+void saveItemsToFile(string filename);
+
 //Section 5: Binary search tree
 struct Warehouse{
     string locationName; //Zone, Aisle, Shelf
@@ -84,3 +96,5 @@ struct Warehouse{
     Warehouse* left;
     Warehouse* right;
 };
+
+#endif
