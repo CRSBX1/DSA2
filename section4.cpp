@@ -2,19 +2,19 @@
 #include <fstream>
 #include <limits>
 
-// Definition of shared globals declared in header.hpp
+//Definition of shared globals declared in header.hpp
 Item* itemManagement = nullptr;
 int totalItems = 0;
 
-// Forward declarations for internal helpers
+//Forward declarations for internal helpers
 void displayItem(Item* item);
 Item* createNode(string id, string name, int zone, int aisle, int shelf);
 Item* insertNode(Item* node, Item* newItem);
 void rebalanceTree();
 
-// FILE HANDLING FUNCTIONS
+//FILE HANDLING FUNCTIONS
 
-// Load items from file into BST
+//Load items from file into BST
 void loadItemsFromFile(string filename) {
     ifstream file(filename);
     if (!file.is_open()) {
@@ -29,7 +29,7 @@ void loadItemsFromFile(string filename) {
     while (getline(file, line)) {
         if (line.empty()) continue;
 
-        // Parse comma separated values
+        //Parse comma separated values
         string id = "", name = "", zoneStr = "", aisleStr = "", shelfStr = "";
         int field = 0;
         for (int i = 0; i <= (int)line.length(); i++) {
@@ -58,13 +58,13 @@ void loadItemsFromFile(string filename) {
     }
     file.close();
 
-    // Rebalance after bulk load, because sequential IDs in the CSV would produce a right-skewed tree
+    //Rebalance after bulk load, because sequential IDs in the CSV would produce a right-skewed tree
     rebalanceTree();
 
     cout << "  Loaded " << totalItems << " items from file." << endl;
 }
 
-// Recursive helper to write nodes in order
+//Recursive helper to write nodes in order
 void writeNodes(Item* node, ofstream &file) {
     if (node == nullptr) return;
     writeNodes(node->left, file);
@@ -76,7 +76,7 @@ void writeNodes(Item* node, ofstream &file) {
     writeNodes(node->right, file);
 }
 
-// Save all items back to file using inorder traversal
+//Save all items back to file using inorder traversal
 void saveItemsToFile(string filename) {
     ofstream file(filename);
     if (!file.is_open()) {
@@ -88,9 +88,9 @@ void saveItemsToFile(string filename) {
     file.close();
 }
 
-// BST CORE OPERATIONS
+//BST CORE OPERATIONS
 
-// Create a new item node
+//Create a new item node
 Item* createNode(string id, string name, int zone, int aisle, int shelf) {
     Item* newNode = new Item();
     newNode->itemID = id;
@@ -103,7 +103,7 @@ Item* createNode(string id, string name, int zone, int aisle, int shelf) {
     return newNode;
 }
 
-// Recursive insert into BST sorted by itemID
+//Recursive insert into BST sorted by itemID
 Item* insertNode(Item* node, Item* newItem) {
     if (node == nullptr) {
         totalItems++;
@@ -118,7 +118,7 @@ Item* insertNode(Item* node, Item* newItem) {
     return node;
 }
 
-// Recursive search by ID with comparison counter
+//Recursive search by ID with comparison counter
 Item* searchIDNode(Item* node, string id, int &comparisons) {
     if (node == nullptr) return nullptr;
     comparisons++;
@@ -127,14 +127,14 @@ Item* searchIDNode(Item* node, string id, int &comparisons) {
     return searchIDNode(node->right, id, comparisons);
 }
 
-// Find the minimum node in a subtree
+//Find the minimum node in a subtree
 Item* findMin(Item* node) {
     while (node->left != nullptr)
         node = node->left;
     return node;
 }
 
-// Recursive delete from BST by ID
+//Recursive delete from BST by ID
 Item* deleteNode(Item* node, string id, bool &deleted) {
     if (node == nullptr) return nullptr;
 
@@ -143,14 +143,14 @@ Item* deleteNode(Item* node, string id, bool &deleted) {
     else if (id > node->itemID)
         node->right = deleteNode(node->right, id, deleted);
     else {
-        // Case 1: Leaf node
+        //Case 1: Leaf node
         if (node->left == nullptr && node->right == nullptr) {
             delete node;
             totalItems--;
             deleted = true;
             return nullptr;
         }
-        // Case 2: One child
+        //Case 2: One child
         if (node->left == nullptr) {
             Item* temp = node->right;
             delete node;
@@ -165,8 +165,8 @@ Item* deleteNode(Item* node, string id, bool &deleted) {
             deleted = true;
             return temp;
         }
-        // Case 3: Two children, copy successor data, then delete the successor
-        // The recursive delete handles totalItems decrement exactly once
+        //Case 3: Two children, copy successor data, then delete the successor
+        //The recursive delete handles totalItems decrement exactly once
         Item* successor = findMin(node->right);
         node->itemID = successor->itemID;
         node->itemName = successor->itemName;
@@ -178,9 +178,9 @@ Item* deleteNode(Item* node, string id, bool &deleted) {
     return node;
 }
 
-// BST BALANCING (FLATTEN AND REBUILD)
+//BST BALANCING (FLATTEN AND REBUILD)
 
-// Recursive in-order traversal: flattens the BST into a sorted array of node pointers
+//Recursive in-order traversal: flattens the BST into a sorted array of node pointers
 void flattenBST(Item* node, Item** arr, int &index) {
     if (node == nullptr) return;
     flattenBST(node->left, arr, index);
@@ -188,7 +188,7 @@ void flattenBST(Item* node, Item** arr, int &index) {
     flattenBST(node->right, arr, index);
 }
 
-// Rebuild a balanced BST: always picks the middle element as the subtree root
+//Rebuild a balanced BST: always picks the middle element as the subtree root
 Item* buildBalanced(Item** arr, int start, int end) {
     if (start > end) return nullptr;
     int mid = (start + end) / 2;
@@ -198,7 +198,7 @@ Item* buildBalanced(Item** arr, int start, int end) {
     return root;
 }
 
-// Rebalance the BST
+//Rebalance the BST
 void rebalanceTree() {
     if (itemManagement == nullptr || totalItems <= 2) return;
 
@@ -211,9 +211,9 @@ void rebalanceTree() {
     delete[] arr;
 }
 
-// HELPER FUNCTIONS
+//HELPER FUNCTIONS
 
-// Convert string to lowercase
+//Convert string to lowercase
 string toLower(string s) {
     string result = s;
     for (int i = 0; i < (int)result.length(); i++) {
@@ -223,7 +223,7 @@ string toLower(string s) {
     return result;
 }
 
-// Check if needle is contained in haystack (case insensitive)
+//Check if needle is contained in haystack (case insensitive)
 bool containsSubstring(string haystack, string needle) {
     string h = toLower(haystack);
     string n = toLower(needle);
@@ -241,7 +241,7 @@ bool containsSubstring(string haystack, string needle) {
     return false;
 }
 
-// Recursive search by name with partial case insensitive matching
+//Recursive search by name with partial case insensitive matching
 int searchNameNode(Item* node, string name, int &matches) {
     if (node == nullptr) return matches;
     if (containsSubstring(node->itemName, name)) {
@@ -253,9 +253,9 @@ int searchNameNode(Item* node, string name, int &matches) {
     return matches;
 }
 
-// Validate location based on warehouse layout
-// Zone 1, Aisle 1-2, Shelf 1-4
-// Zone 2, Aisle 3-4, Shelf 5-8
+//Validate location based on warehouse layout
+//Zone 1, Aisle 1-2, Shelf 1-4
+//Zone 2, Aisle 3-4, Shelf 5-8
 bool isValidLocation(int zone, int aisle, int shelf) {
     if (zone < 1 || zone > 2) {
         cout << "  Invalid zone. Must be 1 or 2." << endl;
@@ -284,7 +284,7 @@ bool isValidLocation(int zone, int aisle, int shelf) {
     return true;
 }
 
-// Find the highest existing ID in the BST
+//Find the highest existing ID in the BST
 string findMaxID(Item* node) {
     if (node == nullptr) return "1000";
     while (node->right != nullptr)
@@ -292,7 +292,7 @@ string findMaxID(Item* node) {
     return node->itemID;
 }
 
-// Generate next incremental 4 digit ID
+//Generate next incremental 4 digit ID
 string generateNextID() {
     string maxID = findMaxID(itemManagement);
     int num = 0;
@@ -310,7 +310,7 @@ string generateNextID() {
     return string(digits);
 }
 
-// Safely read an integer from input
+//Safely read an integer from input
 int readInt(string prompt) {
     int value;
     while (true) {
@@ -327,9 +327,9 @@ int readInt(string prompt) {
     }
 }
 
-// DISPLAY FUNCTIONS
+//DISPLAY FUNCTIONS
 
-// Display single item details
+//Display single item details
 void displayItem(Item* item) {
     cout << "  ID: " << item->itemID
          << " | Name: " << item->itemName
@@ -338,7 +338,7 @@ void displayItem(Item* item) {
          << " | Shelf: " << item->shelfLocation << endl;
 }
 
-// Inorder traversal to display all items sorted by ID
+//Inorder traversal to display all items sorted by ID
 void displayAllNodes(Item* node) {
     if (node == nullptr) return;
     displayAllNodes(node->left);
@@ -346,7 +346,7 @@ void displayAllNodes(Item* node) {
     displayAllNodes(node->right);
 }
 
-// Display items filtered by zone
+//Display items filtered by zone
 void displayZoneNodes(Item* node, int zone) {
     if (node == nullptr) return;
     displayZoneNodes(node->left, zone);
@@ -355,13 +355,13 @@ void displayZoneNodes(Item* node, int zone) {
     displayZoneNodes(node->right, zone);
 }
 
-// MENU 
+//MENU 
 
 void addItem() {
     string id, name;
     int zone, aisle, shelf;
 
-    // Auto generate next incremental ID
+    //Auto generate next incremental ID
     id = generateNextID();
     cout << "  Generated Item ID: " << id << endl;
 
@@ -371,7 +371,7 @@ void addItem() {
     aisle = readInt("  Enter Aisle: ");
     shelf = readInt("  Enter Shelf: ");
 
-    // Validate location based on warehouse layout
+    //Validate location based on warehouse layout
     if (!isValidLocation(zone, aisle, shelf)) return;
 
     Item* newItem = createNode(id, name, zone, aisle, shelf);
@@ -451,12 +451,12 @@ void editItem() {
     aisle = readInt("  Enter new Aisle (0 to keep): ");
     shelf = readInt("  Enter new Shelf (0 to keep): ");
 
-    // Use existing values if user entered 0
+    //Use existing values if user entered 0
     int newZone = (zone != 0) ? zone : item->zoneLocation;
     int newAisle = (aisle != 0) ? aisle : item->aisleLocation;
     int newShelf = (shelf != 0) ? shelf : item->shelfLocation;
 
-    // Validate combined location
+    //Validate combined location
     if (!isValidLocation(newZone, newAisle, newShelf)) return;
 
     if (!name.empty()) item->itemName = name;
@@ -523,7 +523,7 @@ void displayByZone() {
     displayZoneNodes(itemManagement, zone);
 }
 
-// MAIN MENU
+//MAIN MENU
 
 void itemMenu() {
     loadItemsFromFile("items.txt");
@@ -560,7 +560,7 @@ void itemMenu() {
     } while (choice != 8);
 }
 
-// Testing
+//Testing
 int main() {
     itemMenu();
     return 0;
