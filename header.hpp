@@ -29,23 +29,35 @@ All data structure except robot navigation needs to be sorted:
 
 
 //section 1: Linear Queue
-struct Order{
+struct Order {
     string orderID;
     string itemID;
-    int arrivalTime; // arrival time as minutes; i.e. 10:30 to 630 minutes
-    string processState; //Pending, In Progress, Completed
+    int arrivalTime;     // stored as total minutes, ex. 1:30 = 90
+    string processState; // "Pending", "In Progress", or "Completed"
 
-    Order(string id, int hour, int minute, string item1){
+    // constructor with parameters
+    Order(string id, int hour, int minute, string item1) {
         orderID = id;
         itemID = item1;
-        arrivalTime = hour*60+minute;
+        arrivalTime = hour * 60 + minute;
         processState = "Pending";
+    }
+
+    // default constructor (needed when dequeue returns an empty order)
+    Order() {
+        orderID = "";
+        itemID = "";
+        arrivalTime = 0;
+        processState = "";
     }
 };
 
-struct OrderNode{
+// node for the order queue linked list
+struct OrderNode {
     Order order;
     OrderNode* next;
+
+    OrderNode(Order o) : order(o), next(nullptr) {}
 };
 
 //section 2: Circular Queue
@@ -109,5 +121,35 @@ void buildWarehouse();
 void cleanupWarehouse();
 string getPathToLocation(int zone, int aisle, int shelf);
 bool isValidWarehouseLocation(int zone, int aisle, int shelf);
+
+
+//function declarations (section 1)
+// max orders the queue can hold before its full
+const int MAX_QUEUE_SIZE = 200;
+// basic queue operations
+void enqueue(Order newOrder);
+Order dequeue();
+bool isEmpty();
+bool isFull();
+int getQueueSize();
+// sorted insert (by arrival time)
+void enqueueSorted(Order newOrder);
+// order management features
+void addNewOrder();
+void processNextOrder();
+void displayPendingOrders();
+void displayNextOrder();
+void displayCompletedOrders();
+void displaySystemStatus();
+// extra features
+void searchOrder();
+void cancelOrder();
+// for robot assignment module to grab the next order
+Order getNextOrderForRobot();
+bool hasOrdersWaiting();
+// menu
+void orderManagementMenu();
+// helper
+string convertTimeToString(int minutes);
 
 #endif
