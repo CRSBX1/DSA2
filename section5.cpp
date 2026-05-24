@@ -1,16 +1,29 @@
+/*
+Section 5: Warehouse Layout & Navigation Module
+
+This module builds a binary tree representing the warehouse structure.
+The tree has 4 levels: Warehouse -> Zones -> Aisles -> Shelves
+
+We use BST property (left child = smaller number, right child = bigger number)
+so we can navigate by comparing target values at each level.
+
+The main output is a path string like "LRL" which tells the robot
+which direction to turn at each level. Section 3 pushes these onto
+a stack so the robot can reverse the path later.
+*/
+
 #include "header.hpp"
 #include <limits>
 using namespace std;
 
-//Definition of the shared global declared in header.hpp
 Warehouse* warehouseRoot = nullptr;
 
-//Forward declarations for internal helpers
 int readWarehouseInt(string prompt);
 
-//TREE CONSTRUCTION
 
-//Allocate a single warehouse node
+// ---- TREE CONSTRUCTION ----
+
+// just creates a node with the given name and number
 Warehouse* createWarehouseNode(string name, int number) {
     Warehouse* node = new Warehouse();
     node->locationName = name;
@@ -20,26 +33,24 @@ Warehouse* createWarehouseNode(string name, int number) {
     return node;
 }
 
-//Build the fixed warehouse hierarchy described in the layout diagram.
-//Re-running this safely tears down the previous tree first so the test
-//menu can be opened multiple times during a single program run.
+// builds the whole warehouse tree manually
+// structure is fixed: 2 zones, 4 aisles, 8 shelves
 void buildWarehouse() {
-    cleanupWarehouse();
+    cleanupWarehouse(); // clear old tree if any
 
-    //Root
     warehouseRoot = createWarehouseNode("Warehouse", 0);
 
-    //Zone level
+    // zones
     warehouseRoot->left  = createWarehouseNode("Zone", 1);
     warehouseRoot->right = createWarehouseNode("Zone", 2);
 
-    //Aisle level: zone 1 owns aisles 1-2, zone 2 owns aisles 3-4
+    // aisles - zone 1 gets aisle 1&2, zone 2 gets aisle 3&4
     warehouseRoot->left->left   = createWarehouseNode("Aisle", 1);
     warehouseRoot->left->right  = createWarehouseNode("Aisle", 2);
     warehouseRoot->right->left  = createWarehouseNode("Aisle", 3);
     warehouseRoot->right->right = createWarehouseNode("Aisle", 4);
 
-    //Shelf level: each aisle holds 2 shelves, numbered consecutively across the warehouse
+    // shelves - 2 per aisle, numbered 1-8 across the whole warehouse
     warehouseRoot->left->left->left    = createWarehouseNode("Shelf", 1);
     warehouseRoot->left->left->right   = createWarehouseNode("Shelf", 2);
     warehouseRoot->left->right->left   = createWarehouseNode("Shelf", 3);
@@ -50,7 +61,7 @@ void buildWarehouse() {
     warehouseRoot->right->right->right = createWarehouseNode("Shelf", 8);
 }
 
-//Recursive post-order delete to release every node
+// delete tree using post-order (children first then parent)
 void deleteSubtree(Warehouse* node) {
     if (node == nullptr) return;
     deleteSubtree(node->left);
@@ -63,9 +74,12 @@ void cleanupWarehouse() {
     warehouseRoot = nullptr;
 }
 
-//VALIDATION
-//validates a (zone, aisle, shelf) triple against the fixed layout
-//Mirrors the rule used by Section 4 so the two modules can never disagree
+
+// ---- VALIDATION ----
+
+// checks if a zone/aisle/shelf combo actually exists in our layout
+// zone 1 -> aisle 1,2 -> shelf 1-4
+// zone 2 -> aisle 3,4 -> shelf 5-8
 bool isValidWarehouseLocation(int zone, int aisle, int shelf) {
     if (zone == 1) {
         if (aisle < 1 || aisle > 2) return false;
@@ -76,17 +90,18 @@ bool isValidWarehouseLocation(int zone, int aisle, int shelf) {
     } else {
         return false;
     }
-    //Each aisle owns exactly 2 shelves, so the shelf must fall in that aisle's range
+    // each aisle only has 2 shelves so we check that too
     int shelfMin = (aisle - 1) * 2 + 1;
     int shelfMax = shelfMin + 1;
     return shelf >= shelfMin && shelf <= shelfMax;
 }
 
-//PATH GENERATION (BST traversal)
-//descends the tree level by level, choosing left or right by comparing the
-//target value against the current node's children. Each decision is appended
-//to the path string as 'L' or 'R'. Section 3 will push these characters onto
-//the robot navigation stack so the return trip can pop them in reverse
+
+// ---- PATH GENERATION ----
+
+// walks down the tree level by level to find the target shelf
+// at each level: if target <= left child number, go left. otherwise go right.
+// builds a string like "LRL" that section 3 can push onto the stack
 string getPathToLocation(int zone, int aisle, int shelf) {
     if (warehouseRoot == nullptr) return "";
     if (!isValidWarehouseLocation(zone, aisle, shelf)) return "";
@@ -94,7 +109,7 @@ string getPathToLocation(int zone, int aisle, int shelf) {
     string path = "";
     Warehouse* current = warehouseRoot;
 
-    //lLevel 1: pick the zone (left = zone 1, right = zone 2)
+    // level 1 - pick zone
     if (zone <= current->left->locationNumber) {
         path += 'L';
         current = current->left;
@@ -103,7 +118,7 @@ string getPathToLocation(int zone, int aisle, int shelf) {
         current = current->right;
     }
 
-    //level 2: pick the aisle inside the chosen zone
+    // level 2 - pick aisle
     if (aisle <= current->left->locationNumber) {
         path += 'L';
         current = current->left;
@@ -112,7 +127,7 @@ string getPathToLocation(int zone, int aisle, int shelf) {
         current = current->right;
     }
 
-    //level 3: pick the shelf inside the chosen aisle
+    // level 3 - pick shelf
     if (shelf <= current->left->locationNumber) {
         path += 'L';
     } else {
@@ -122,30 +137,33 @@ string getPathToLocation(int zone, int aisle, int shelf) {
     return path;
 }
 
-//Computes the path from one shelf to another by walking up to the lowest
-//common ancestor and then down to the destination. Going up is recorded as
-//'U', going down as 'L' or 'R'. Useful when robots move between tasks
-//without returning to the warehouse root in between.
+// finds path between two shelves using lowest common ancestor
+// basically: find where the two paths diverge, go UP from start to that point,
+// then go DOWN to the destination
+// e.g. shelf 1 ("LLL") to shelf 8 ("RRR") -> they diverge at index 0
+//      so result is "UUURRR" (3 ups + 3 downs)
 string getPathBetween(int zoneA, int aisleA, int shelfA,
                       int zoneB, int aisleB, int shelfB) {
     string from = getPathToLocation(zoneA, aisleA, shelfA);
     string to   = getPathToLocation(zoneB, aisleB, shelfB);
     if (from.empty() || to.empty()) return "";
 
-    //find the shared prefix; what remains in 'from' must be undone, what
-    //remains in 'to' must be walked.
+    // find shared prefix
     int common = 0;
     int minLen = (int)from.length() < (int)to.length() ? (int)from.length() : (int)to.length();
     while (common < minLen && from[common] == to[common]) common++;
 
+    // go up for remaining steps in 'from', then down for remaining steps in 'to'
     string result = "";
     for (int i = common; i < (int)from.length(); i++) result += 'U';
     for (int i = common; i < (int)to.length();   i++) result += to[i];
     return result;
 }
 
-//TRAVERSALS
-//pre-order: root, left, right — useful for printing the structure top down.
+
+// ---- TRAVERSALS ----
+
+// pre-order: root first then children
 void preOrder(Warehouse* node) {
     if (node == nullptr) return;
     cout << "  " << node->locationName << " " << node->locationNumber << endl;
@@ -153,7 +171,7 @@ void preOrder(Warehouse* node) {
     preOrder(node->right);
 }
 
-//in-order: left, root, right 
+// in-order: left, root, right (gives sorted order because BST)
 void inOrder(Warehouse* node) {
     if (node == nullptr) return;
     inOrder(node->left);
@@ -161,7 +179,7 @@ void inOrder(Warehouse* node) {
     inOrder(node->right);
 }
 
-//post-order: left, right, root 
+// post-order: children first then root
 void postOrder(Warehouse* node) {
     if (node == nullptr) return;
     postOrder(node->left);
@@ -169,19 +187,17 @@ void postOrder(Warehouse* node) {
     cout << "  " << node->locationName << " " << node->locationNumber << endl;
 }
 
-//DISPLAY
-//Cell widths derived from the fixed perfect-binary-tree shape:
-//1 warehouse -> 2 zones -> 4 aisles -> 8 shelves, each shelf gets 8 chars
-//Each parent spans (2 * child width + 1) so dividers from above flow
-//straight down through every row, matching the merged-cell diagram
-const int SHELF_W = 8;
-const int AISLE_W = SHELF_W * 2 + 1;   //17
-const int ZONE_W  = AISLE_W * 2 + 1;   //35
-const int WH_W    = ZONE_W  * 2 + 1;   //71
-const int TABLE_W = WH_W + 2;          //73 including outer borders
 
-//Manual int-to-string so we don't pull in std::to_string or any helper that
-//relies on built-in containers, matching the rules used in section 4
+// ---- DISPLAY (table layout) ----
+
+// cell widths - each parent spans 2 children + 1 divider
+const int SHELF_W = 8;
+const int AISLE_W = SHELF_W * 2 + 1;   // 17
+const int ZONE_W  = AISLE_W * 2 + 1;   // 35
+const int WH_W    = ZONE_W  * 2 + 1;   // 71
+const int TABLE_W = WH_W + 2;          // 73
+
+// manual int to string (cant use to_string cuz STL restriction)
 string intToStr(int n) {
     if (n == 0) return "0";
     string s = "";
@@ -195,7 +211,7 @@ string intToStr(int n) {
     return s;
 }
 
-//Print "|" followed by `text` centered inside `width` characters.
+// prints "|" then centers the text inside the given width
 void printCell(string text, int width) {
     int len = (int)text.length();
     if (len > width) len = width;
@@ -207,9 +223,7 @@ void printCell(string text, int width) {
     for (int i = 0; i < rightPad; i++) cout << ' ';
 }
 
-//True when the row at level (0=Warehouse, 1=Zone, 2=Aisle, 3=Shelf) has a
-//vertical bar at column `col`. Bar spacing equals each level's cell width
-//plus its trailing border.
+// checks if theres a vertical bar at this column for a given level
 bool hasBarAt(int level, int col) {
     int step = (level == 0) ? WH_W + 1
              : (level == 1) ? ZONE_W + 1
@@ -218,10 +232,8 @@ bool hasBarAt(int level, int col) {
     return (col % step) == 0;
 }
 
-//Separator line. `aboveLevel` / `belowLevel` are the row levels immediately
-//above and below this line (use -1 for the table's top/bottom edge). A '+'
-//appears wherever either neighbour has a bar so vertical dividers from
-//upper rows pass through cleanly.
+// prints the horizontal line between rows
+// puts '+' where vertical bars from above or below meet the line
 void printSeparator(int aboveLevel, int belowLevel) {
     cout << "  ";
     for (int col = 0; col < TABLE_W; col++) {
@@ -233,9 +245,7 @@ void printSeparator(int aboveLevel, int belowLevel) {
     cout << endl;
 }
 
-//Recursively walk down to the requested depth, then emit one cell per node
-//at that depth. The cells naturally line up under their parent's cell
-//because the warehouse tree is a perfect binary tree
+// recursively goes to the target depth and prints a cell for each node there
 void emitLevelCells(Warehouse* node, int depth, int targetDepth, int cellWidth) {
     if (node == nullptr) return;
     if (depth == targetDepth) {
@@ -253,7 +263,7 @@ void emitLevelCells(Warehouse* node, int depth, int targetDepth, int cellWidth) 
     emitLevelCells(node->right, depth + 1, targetDepth, cellWidth);
 }
 
-//Print one full table row for the given level
+// prints one row of the table
 void printLevelRow(int level) {
     int width = (level == 0) ? WH_W
               : (level == 1) ? ZONE_W
@@ -264,7 +274,7 @@ void printLevelRow(int level) {
     cout << "|" << endl;
 }
 
-//translate a single direction character into a human readable label
+// converts L/R/U to readable words
 string describeStep(char c) {
     if (c == 'L') return "Left";
     if (c == 'R') return "Right";
@@ -272,7 +282,7 @@ string describeStep(char c) {
     return "?";
 }
 
-//print a path with arrows between steps, e.g. "Left -> Right -> Right"
+// prints path as "Left -> Right -> Left"
 void printPath(string path) {
     if (path.empty()) {
         cout << "  (no steps)" << endl;
@@ -286,8 +296,7 @@ void printPath(string path) {
     cout << endl;
 }
 
-//print the path along with the locations it visits so the user can sanity
-//check the result against the warehouse diagram.
+// shows the full path details including which nodes are visited
 void printPathWithNodes(int zone, int aisle, int shelf) {
     string path = getPathToLocation(zone, aisle, shelf);
     if (path.empty()) {
@@ -308,7 +317,10 @@ void printPathWithNodes(int zone, int aisle, int shelf) {
     }
 }
 
-//INPUT HELPER
+
+// ---- INPUT HELPER ----
+
+// reads an int safely, keeps asking if user types garbage
 int readWarehouseInt(string prompt) {
     int value;
     while (true) {
@@ -325,7 +337,9 @@ int readWarehouseInt(string prompt) {
     }
 }
 
-//MENU
+
+// ---- MENU ----
+
 void displayLayout() {
     if (warehouseRoot == nullptr) {
         cout << "  Warehouse layout has not been built yet." << endl;
@@ -333,15 +347,15 @@ void displayLayout() {
     }
     cout << "  Warehouse Layout:" << endl;
     cout << endl;
-    printSeparator(-1, 0);//top edge
-    printLevelRow(0);//Warehouse
+    printSeparator(-1, 0);
+    printLevelRow(0);       // warehouse
     printSeparator(0, 1);
-    printLevelRow(1);//Zones
+    printLevelRow(1);       // zones
     printSeparator(1, 2);
-    printLevelRow(2);//Aisles
+    printLevelRow(2);       // aisles
     printSeparator(2, 3);
-    printLevelRow(3);//Shelves
-    printSeparator(3, -1);//bottom edge
+    printLevelRow(3);       // shelves
+    printSeparator(3, -1);
 }
 
 void runTraversals() {
@@ -428,7 +442,6 @@ void warehouseMenu() {
     } while (choice != 5);
 }
 
-//Testing
 int main() {
     warehouseMenu();
     cleanupWarehouse();
