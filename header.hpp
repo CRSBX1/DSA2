@@ -7,10 +7,10 @@ using namespace std;
 
 /*
 Data amount:
-1. 200 orders
-2. 200 items
-3. 50 robots
-4. 50 navigation modules
+1. Amount of orders depends on entered user input
+2. Items may be deleted or added by users
+3. Amount of robots depends on entered user input
+4. number of navigation modules per robot amount
 
 Data structures:
 1. Orders: Queue
@@ -22,11 +22,10 @@ Data structures:
 All data structure except robot navigation needs to be sorted:
 1. Order by arrival time
 2. Robots by ID
-3. Not needed, since 
-4. 
-
+3. Not needed
+4. Item by ID
+5. Hierarchical structure
 */
-
 
 //section 1: Linear Queue
 struct Order {
@@ -60,26 +59,73 @@ struct OrderNode {
     OrderNode(Order o) : order(o), next(nullptr) {}
 };
 
-//section 2: Circular Queue
+//function declarations (section 1)
+// max orders the queue can hold before its full
+const int MAX_QUEUE_SIZE = 200;
+// basic queue operations
+void enqueue(Order newOrder);
+Order dequeue();
+bool isEmpty();
+bool isFull();
+int getQueueSize();
+// sorted insert (by arrival time)
+void enqueueSorted(Order newOrder);
+// order management features
+void addNewOrder();
+void processNextOrder();
+void processAllOrders();
+void displayPendingOrders();
+void displayNextOrder();
+void displayCompletedOrders();
+void displaySystemStatus();
+// extra features
+void searchOrder();
+void cancelOrder();
+// for robot assignment module to grab the next order
+Order getNextOrderForRobot();
+bool hasOrdersWaiting();
+void markOrderCompleted(Order completedOrder);
+void processAllPendingOrders();
+// menu
+void orderManagementMenu();
+// helper
+string convertTimeToString(int minutes);
 
-struct Robot{
+//section 2: Circular Queue
+struct Robot{ //Robot object
     string robotID;
     string assigneditemID;
-    bool active;
+    string currentTask;
+    bool idle;
+    bool inMaintenance;
 };
 
-struct RobotNode{
+struct RobotNode{ //Robot Node
     Robot robot;
     RobotNode* next;
 };
 
+void robotMenu();
+
 //section 3: stack (1 stack per robot)
 
 struct RobotMovement{
+    int id;
     string direction;
     RobotMovement* next;
-    RobotMovement* previous;
+    RobotMovement* prev;
 };
+
+class movementStack{ //Navigation module stack
+    int id;
+    int maxSize;
+
+    public:
+        movementStack(int size);
+        void push(RobotMovement* &top, string drc);
+        string pop(RobotMovement* &top);
+        bool isStackEmpty();
+}; 
 
 //Section 4: Binary search tree
 struct Item{
@@ -121,35 +167,5 @@ void buildWarehouse();
 void cleanupWarehouse();
 string getPathToLocation(int zone, int aisle, int shelf);
 bool isValidWarehouseLocation(int zone, int aisle, int shelf);
-
-
-//function declarations (section 1)
-// max orders the queue can hold before its full
-const int MAX_QUEUE_SIZE = 200;
-// basic queue operations
-void enqueue(Order newOrder);
-Order dequeue();
-bool isEmpty();
-bool isFull();
-int getQueueSize();
-// sorted insert (by arrival time)
-void enqueueSorted(Order newOrder);
-// order management features
-void addNewOrder();
-void processNextOrder();
-void displayPendingOrders();
-void displayNextOrder();
-void displayCompletedOrders();
-void displaySystemStatus();
-// extra features
-void searchOrder();
-void cancelOrder();
-// for robot assignment module to grab the next order
-Order getNextOrderForRobot();
-bool hasOrdersWaiting();
-// menu
-void orderManagementMenu();
-// helper
-string convertTimeToString(int minutes);
 
 #endif

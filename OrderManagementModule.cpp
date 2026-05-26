@@ -195,6 +195,15 @@ void addNewOrder(){
     cout<<"Position : Queue has "<<queueSize<<" order(s)"<<endl;
 }
 
+void markOrderCompleted(Order completedOrder){
+    completedOrder.processState = "Completed";
+
+    OrderNode* completedNode = new OrderNode(completedOrder);
+    completedNode->next = completedHead;
+    completedHead = completedNode;
+    completedCount++;
+}
+
 //takes the front order out, marks it done, and moves it to completed list
 void processNextOrder(){
     cout<<"\n====================================="<<endl;
@@ -207,22 +216,20 @@ void processNextOrder(){
         return;
     }
     
-    cout<<"Processing: "<<front->order.orderID
-        <<" (Item: "<<front->order.itemID
-        <<", Time: "<<convertTimeToString(front->order.arrivalTime)<<")"<<endl;
-    
-    Order processed = dequeue();
-    processed.processState = "Completed";
+    processAllPendingOrders();
+}
 
-    //add to completed list (newest first)
-    OrderNode* completedNode = new OrderNode(processed);
-    completedNode->next = completedHead;
-    completedHead = completedNode;
-    completedCount++;
+void processAllOrders(){
+    cout<<"\n====================================="<<endl;
+    cout<<"          PROCESS ALL ORDERS"<<endl;
+    cout<<"====================================="<<endl;
 
-    cout<<"Status: Pending -> Completed"<<endl;
-    cout<<"Remaining in queue: "<<queueSize<<endl;
-    cout<<"Order ready for robot assignment. Robot will pick this up!"<<endl;
+    if(isEmpty()){
+        cout<<"[INFO] No pending orders to process"<<endl;
+        return;
+    }
+
+    processAllPendingOrders();
 }
 
 //prints all order currently waiting in queue
@@ -464,12 +471,13 @@ void orderManagementMenu(){
         cout<<"====================================="<<endl;
         cout<<"1. Add New Order"<<endl;
         cout<<"2. Process Next Order"<<endl;
-        cout<<"3. View Pending Orders"<<endl;
-        cout<<"4. View Next Order to Process"<<endl;
-        cout<<"5. View Completed Orders"<<endl;
-        cout<<"6. View System Status"<<endl;
-        cout<<"7. Search Order by ID"<<endl;
-        cout<<"8. Cancel Order"<<endl;
+        cout<<"3. Process All Orders"<<endl;
+        cout<<"4. View Pending Orders"<<endl;
+        cout<<"5. View Next Order to Process"<<endl;
+        cout<<"6. View Completed Orders"<<endl;
+        cout<<"7. View System Status"<<endl;
+        cout<<"8. Search Order by ID"<<endl;
+        cout<<"9. Cancel Order"<<endl;
         cout<<"0. Back to Main Menu"<<endl;
         cout<<"======================================"<<endl;
         cout<<"Enter choice: ";
@@ -488,16 +496,18 @@ void orderManagementMenu(){
             case 2:
                 processNextOrder(); break;
             case 3:
-                displayPendingOrders(); break;
+                processAllOrders(); break;
             case 4:
-                displayNextOrder(); break;
+                displayPendingOrders(); break;
             case 5: 
-                displayCompletedOrders(); break;
+                displayNextOrder(); break;
             case 6:
-                displaySystemStatus(); break;
+                displayCompletedOrders(); break;
             case 7:
-                searchOrder(); break;
+                displaySystemStatus(); break;
             case 8:
+                searchOrder(); break;
+            case 9:
                 cancelOrder(); break;
             case 0:
                 cout<<"\nReturning to main menu..."<<endl; break;

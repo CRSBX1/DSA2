@@ -7,7 +7,12 @@
             "args": [
                 "-fdiagnostics-color=always",
                 "-g",
-                "${file}",
+                "WarehouseSystem.cpp",
+                "OrderManagementModule.cpp",
+                "RobotModule.cpp",
+                "RobotNavigationModule.cpp",
+                "ItemManagementModule.cpp",
+                "WarehouseLayoutModule.cpp",
                 "-o",
                 "${fileDirname}\\${fileBasenameNoExtension}.exe"
             ],

@@ -99,10 +99,9 @@ bool isValidWarehouseLocation(int zone, int aisle, int shelf) {
 
 // ---- PATH GENERATION ----
 
-// walks down the tree level by level to find the target shelf
-// at each level: if target <= left child number, go left. otherwise go right.
-// builds a string like "LRL" that section 3 can push onto the stack
-string getPathToLocation(int zone, int aisle, int shelf) {
+// builds the tree-only branch path, without physical movement steps
+// example: "LRL" means left child, right child, left child
+string getTreePathToLocation(int zone, int aisle, int shelf) {
     if (warehouseRoot == nullptr) return "";
     if (!isValidWarehouseLocation(zone, aisle, shelf)) return "";
 
@@ -137,15 +136,27 @@ string getPathToLocation(int zone, int aisle, int shelf) {
     return path;
 }
 
-// finds path between two shelves using lowest common ancestor
-// basically: find where the two paths diverge, go UP from start to that point,
-// then go DOWN to the destination
-// e.g. shelf 1 ("LLL") to shelf 8 ("RRR") -> they diverge at index 0
-//      so result is "UUURRR" (3 ups + 3 downs)
+// walks down the tree and converts every tree edge into movement steps
+// example: "LRL" becomes "FLFRFL" for forward + turn instructions
+string getPathToLocation(int zone, int aisle, int shelf) {
+    string treePath = getTreePathToLocation(zone, aisle, shelf);
+    string movementPath = "";
+
+    for(int i = 0; i < (int)treePath.length(); i++){
+        movementPath += 'F';
+        movementPath += treePath[i];
+    }
+
+    return movementPath;
+}
+
+// finds path between two shelves using lowest common ancestor.
+// structural paths are compared without F/B movement steps, then converted
+// into physical movement steps for display.
 string getPathBetween(int zoneA, int aisleA, int shelfA,
                       int zoneB, int aisleB, int shelfB) {
-    string from = getPathToLocation(zoneA, aisleA, shelfA);
-    string to   = getPathToLocation(zoneB, aisleB, shelfB);
+    string from = getTreePathToLocation(zoneA, aisleA, shelfA);
+    string to   = getTreePathToLocation(zoneB, aisleB, shelfB);
     if (from.empty() || to.empty()) return "";
 
     // find shared prefix
@@ -153,10 +164,13 @@ string getPathBetween(int zoneA, int aisleA, int shelfA,
     int minLen = (int)from.length() < (int)to.length() ? (int)from.length() : (int)to.length();
     while (common < minLen && from[common] == to[common]) common++;
 
-    // go up for remaining steps in 'from', then down for remaining steps in 'to'
+    // backtrack for remaining steps in 'from', then move forward/turn down to destination
     string result = "";
-    for (int i = common; i < (int)from.length(); i++) result += 'U';
-    for (int i = common; i < (int)to.length();   i++) result += to[i];
+    for (int i = common; i < (int)from.length(); i++) result += 'B';
+    for (int i = common; i < (int)to.length();   i++) {
+        result += 'F';
+        result += to[i];
+    }
     return result;
 }
 
@@ -274,15 +288,17 @@ void printLevelRow(int level) {
     cout << "|" << endl;
 }
 
-// converts L/R/U to readable words
+// converts movement characters to readable words
 string describeStep(char c) {
+    if (c == 'F') return "Forward";
+    if (c == 'B') return "Backward";
     if (c == 'L') return "Left";
     if (c == 'R') return "Right";
     if (c == 'U') return "Up";
     return "?";
 }
 
-// prints path as "Left -> Right -> Left"
+// prints path as readable movement steps
 void printPath(string path) {
     if (path.empty()) {
         cout << "  (no steps)" << endl;
@@ -299,6 +315,7 @@ void printPath(string path) {
 // shows the full path details including which nodes are visited
 void printPathWithNodes(int zone, int aisle, int shelf) {
     string path = getPathToLocation(zone, aisle, shelf);
+    string treePath = getTreePathToLocation(zone, aisle, shelf);
     if (path.empty()) {
         cout << "  Invalid destination." << endl;
         return;
@@ -311,8 +328,8 @@ void printPathWithNodes(int zone, int aisle, int shelf) {
     cout << "  Nodes visited:" << endl;
     Warehouse* current = warehouseRoot;
     cout << "    " << current->locationName << endl;
-    for (int i = 0; i < (int)path.length(); i++) {
-        current = (path[i] == 'L') ? current->left : current->right;
+    for (int i = 0; i < (int)treePath.length(); i++) {
+        current = (treePath[i] == 'L') ? current->left : current->right;
         cout << "    -> " << current->locationName << " " << current->locationNumber << endl;
     }
 }
@@ -409,8 +426,9 @@ void findPathBetweenShelves() {
     string path = getPathBetween(zoneA, aisleA, shelfA, zoneB, aisleB, shelfB);
     cout << endl;
     cout << "  Steps from start to destination:" << endl;
+    cout << "  Path string: " << path << endl;
     printPath(path);
-    cout << "  ('U' means step back up to the parent node.)" << endl;
+    cout << "  ('B' means backward/backtracking movement.)" << endl;
 }
 
 void warehouseMenu() {
@@ -441,9 +459,10 @@ void warehouseMenu() {
         }
     } while (choice != 5);
 }
-
+/*
 int main() {
     warehouseMenu();
     cleanupWarehouse();
     return 0;
 }
+*/

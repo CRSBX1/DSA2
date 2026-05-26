@@ -526,8 +526,6 @@ void displayByZone() {
 //MAIN MENU
 
 void itemMenu() {
-    loadItemsFromFile("items.txt");
-
     int choice;
     do {
         cout << endl;
@@ -560,8 +558,10 @@ void itemMenu() {
     } while (choice != 8);
 }
 
+/*
 //Testing
 int main() {
     itemMenu();
     return 0;
 }
+*/
