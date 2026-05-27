@@ -116,6 +116,36 @@ struct RobotMovement{
     RobotMovement* prev;
 };
 
+// Fixed-size log that records every navigation event during a journey.
+// Uses a plain array instead of an STL container (containers are not allowed).
+struct NavigationLog{
+    static const int LOG_CAPACITY = 100; // maximum number of log entries
+    string entries[LOG_CAPACITY];        // the stored log messages
+    int count;                           // how many entries are currently stored
+
+    NavigationLog(){
+        count = 0;
+    }
+
+    // adds one message to the log if there is still room left
+    void add(string entry){
+        if (count < LOG_CAPACITY){
+            entries[count] = entry;
+            count++;
+        }
+    }
+
+    // prints every stored entry in the order it happened
+    void display(){
+        cout << endl;
+        cout << "  ---------- Complete Navigation Log ----------" << endl;
+        for (int i = 0; i < count; i++){
+            cout << "  " << entries[i] << endl;
+        }
+        cout << "  ---------------------------------------------" << endl;
+    }
+};
+
 class movementStack{ //Navigation module stack
     int id;
     int maxSize;
@@ -125,7 +155,21 @@ class movementStack{ //Navigation module stack
         void push(RobotMovement* &top, string drc);
         string pop(RobotMovement* &top);
         bool isStackEmpty();
-}; 
+        // reads the top move, manually reverses it, removes it, returns the reversed direction
+        string backtrack(RobotMovement* &top);
+        // runs a full forward + return journey along the given movement path string
+        void executeNavigation(RobotMovement* &top, string path, bool useObstacles);
+};
+
+// largest number of movement steps a single navigation stack can hold
+const int MAX_PATH_STEPS = 100;
+
+// returns true when a random obstacle blocks the current step (probability is a 0-100 percent chance)
+bool obstacleDetected(int probability);
+// returns a detour direction for a blocked one: Forward->Left, Left->Right, Right->Forward
+string getAlternative(string blocked);
+// standalone menu for the robot navigation & path tracking module
+void navigationMenu();
 
 //Section 4: Binary search tree
 struct Item{
