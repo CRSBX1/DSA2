@@ -479,7 +479,7 @@ void orderManagementMenu(){
         cout<<"8. Search Order by ID"<<endl;
         cout<<"9. Cancel Order"<<endl;
         cout<<"0. Back to Main Menu"<<endl;
-        cout<<"======================================"<<endl;
+        cout<<"====================================="<<endl;
         cout<<"Enter choice: ";
         cin>>choice;
 
