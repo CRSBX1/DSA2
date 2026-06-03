@@ -11,9 +11,10 @@ int main(){
         cout << "========================================================" << endl;
         cout << "1. Order Management" << endl;
         cout << "2. Robot Assignment" << endl;
-        cout << "3. Item Management" << endl;
-        cout << "4. Warehouse Layout" << endl;
-        cout << "5. Exit" << endl;
+        cout << "3. Robot Navigation Simulation" << endl;
+        cout << "4. Item Management" << endl;
+        cout << "5. Warehouse Layout" << endl;
+        cout << "6. Exit" << endl;
         cout << "========================================================" << endl;
         cout << "Enter your choice: ";
         cin >> userChoice;
@@ -27,13 +28,16 @@ int main(){
             robotMenu();
             break;
         case 3:
-            itemMenu();
+            navigationMenu();
             break;
         case 4:
+            itemMenu();
+            break;
+        case 5:
             warehouseMenu();
             cleanupWarehouse();
             break;
-        case 5:
+        case 6:
             loop = false;
             break;
         }

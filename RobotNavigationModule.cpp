@@ -396,18 +396,3 @@ void navigationMenu()
         }
     } while (choice != 4);
 }
-
-/*
-// Standalone test driver for Module 3 only.
-// Uncomment to run this module on its own, then compile with:
-//   g++ -std=c++11 RobotNavigationModule.cpp WarehouseLayoutModule.cpp -o nav && ./nav
-// (WarehouseLayoutModule.cpp is needed for buildWarehouse / getPathToLocation.)
-// IMPORTANT: re-comment this main() before building the full system
-// (WarehouseSystem.cpp), otherwise there will be two main() functions.
-int main()
-{
-    navigationMenu();
-    cleanupWarehouse();
-    return 0;
-}
-*/

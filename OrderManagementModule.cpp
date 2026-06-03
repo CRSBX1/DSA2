@@ -216,7 +216,7 @@ void processNextOrder(){
         return;
     }
     
-    processAllPendingOrders();
+    processOnePendingOrder();
 }
 
 void processAllOrders(){
