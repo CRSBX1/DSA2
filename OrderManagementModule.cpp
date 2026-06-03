@@ -92,7 +92,7 @@ void enqueueSorted(Order newOrder){
     //otherwise walk through and find where it fits
     else{
         OrderNode* current = front;
-        while(current->next != nullptr && current->next->order.arrivalTime < newOrder.arrivalTime){
+        while(current->next != nullptr && current->next->order.arrivalTime <= newOrder.arrivalTime){
             current = current->next;
         }
         newNode->next = current->next;
