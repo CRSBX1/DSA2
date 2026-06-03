@@ -241,7 +241,7 @@ void processOnePendingOrder(){
 
     if(robot.robotID == ""){
         cout << "[INFO] No available robot for " << order.orderID << ". Re-queueing order." << endl;
-        enqueueSorted(order);
+        enqueue(order);
         return;
     }
 
@@ -256,7 +256,7 @@ void processOnePendingOrder(){
     if(item == nullptr){
         cout << "[ERROR] Item " << order.itemID << " was not found. Robot released." << endl;
         releaseRobot(robot.robotID);
-        enqueueSorted(order);
+        enqueue(order);
         return;
     }
 
@@ -299,7 +299,7 @@ void processAllPendingOrders(){
 
         if(robot.robotID == ""){
             cout << "[INFO] No available robot for " << order.orderID << ". Re-queueing order." << endl;
-            enqueueSorted(order);
+            enqueue(order);
             break;
         }
 
@@ -314,7 +314,7 @@ void processAllPendingOrders(){
         if(item == nullptr){
             cout << "[ERROR] Item " << order.itemID << " was not found. Robot released." << endl;
             releaseRobot(robot.robotID);
-            enqueueSorted(order);
+            enqueue(order);
             break;
         }
 
