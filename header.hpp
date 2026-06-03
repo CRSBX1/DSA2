@@ -86,6 +86,7 @@ Order getNextOrderForRobot();
 bool hasOrdersWaiting();
 void markOrderCompleted(Order completedOrder);
 void processAllPendingOrders();
+void processOnePendingOrder();
 // menu
 void orderManagementMenu();
 // helper

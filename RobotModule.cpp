@@ -223,6 +223,62 @@ void releaseRobot(string robotID){
     }while(temp != frontRobot);
 }
 
+void processOnePendingOrder(){
+    if(frontRobot == nullptr){
+        cout << "[INFO] No robots have been created yet. Opening assignment with 5 default robots." << endl;
+        createRobots(5);
+    }
+
+    int processedCount = 0;
+
+    Order order = getNextOrderForRobot();
+    if(order.orderID == ""){
+        return;
+    }
+
+    OrderNode currentOrder(order);
+    Robot robot = assignTask(&currentOrder);
+
+    if(robot.robotID == ""){
+        cout << "[INFO] No available robot for " << order.orderID << ". Re-queueing order." << endl;
+        enqueueSorted(order);
+        return;
+    }
+
+    cout << "--------------------------------------------------------" << endl;
+    cout << "Order " << order.orderID << " status: In Progress" << endl;
+    cout << "Current robot handling task: Robot " << robot.robotID << endl;
+    cout << "Assigned item: " << order.itemID << endl;
+    cout << "Robot " << robot.robotID << "'s current task: " << robot.currentTask << endl;
+
+    int comparisons = 0;
+    Item* item = searchIDNode(itemManagement, order.itemID, comparisons);
+    if(item == nullptr){
+        cout << "[ERROR] Item " << order.itemID << " was not found. Robot released." << endl;
+        releaseRobot(robot.robotID);
+        enqueueSorted(order);
+        return;
+    }
+
+    runNavigation(robot, item);
+    cout << "Robot "<< robot.robotID << " has reached its initial position" << endl;
+    robot.currentTask = "pack";
+    cout << "Robot " << robot.robotID << "'s current task: " << robot.currentTask << endl;
+    cout << "Packing in progress..." << endl;   
+    releaseRobot(robot.robotID);
+    markOrderCompleted(order);
+    processedCount++;
+
+    cout << "Order " << order.orderID << " status: Completed" << endl;
+    cout << "Robot " << robot.robotID << " released." << endl;
+    
+
+    cout << "========================================================" << endl;
+    cout << "Processed orders: " << processedCount << endl;
+    cout << "Remaining pending orders: " << getQueueSize() << endl;
+    displayRobotsBasedOnAssignment(robotCount);
+    displayRobots(robotCount);
+}
 
 void processAllPendingOrders(){
     if(frontRobot == nullptr){

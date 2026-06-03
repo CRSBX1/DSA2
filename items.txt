@@ -199,3 +199,4 @@ ItemID,ItemName,Zone,Aisle,Shelf
 1198,Sketch Pencil Set,2,3,5
 1199,Portable Charger,1,1,1
 1200,UFO,2,3,7
+1201,Indomie,2,3,6
